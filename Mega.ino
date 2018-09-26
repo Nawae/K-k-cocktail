@@ -9,14 +9,10 @@
 
 //CONFIGURATION LCD
 //LiquidCrystal nomDeVariable(RS, E, d4, d5, d6, d7);
-LiquidCrystal monEcran(54,55,56,57,58,59); // Configuration de l'écran
+LiquidCrystal monEcran(14,15,16,17,18,19); // Configuration de l'écran
 
 //CONFIGURATION MUSIQUE
 const int SPEAKER = 24;
-#define SILENCE  0
-#define EIGHTH   1
-#define QUARTER  2
-#define HALF 3
 
 //CONFIGURATION DE L'ANNEAU DE LEDS
 // Parameter 1 = number of pixels in strip
@@ -39,7 +35,7 @@ int posMenu = 0; // Variable de position dans le menu
 int choix = 0; // Variable pour stocker le choix
 int nombreDeRecette = 12; // Permet le modula pour revenir à 1 en cycle navigation
 String ligne1 = "CHOIX COCKTAIL :"; // Affichage de la première ligne
-String ligne2[12] = {"1-Ti Punch      ", "2-Gin Tonic'    ", "3-Planteur      ", "4-Le Rio (SA)      ","5-Gimlet       ","6-Le Bali    ","7-Christopher      ","8-Le Leonie     ","9-Flora Dora     ","10-Gin Fizz       ","11-Bacardi Cocktail      ","12-Le Tonic' (SA)          "}; // Tableau de recette
+String ligne2[12] = {"1-Ti Punch      ", "2-Gin Tonic'    ", "3-Planteur      ", "4-Loeiza (SA)      ","5-Gimlet       ","6-Le Bali    ","7-Christopher      ","8-Le Leo       ","9-Flora Dora     ","10-Gin Fizz       ","11-Bacardi Cocktail      ","12-Le Cendrillon (SA)      "}; // Tableau de recette
 const int orange = 1; // Pin rattaché à la board relais, auquel est relié l'alimentation du moteur contrôlant la pompe de jus d'Orange.
 const int schwepps = 2; // Pin pour la board relais
 const int grenadine = 3; // Pin pour la board relais
@@ -90,37 +86,18 @@ void setup() {
   pinMode(SPEAKER, OUTPUT); // Configuration du pin speaker comme sortie.
 
   // Configuration de l'anneau de leds
-  pinMode(22, OUTPUT); // Configuration du pin 22 comme sortie pour les leds ring.
   strip.begin();
-  colorLED(strip.Color(0, 250, 0), 200); // Simulation de Chargement
-  colorLED(strip.Color(0, 250, 0), 200); // Simulation de Chargement
-  colorLED(strip.Color(0, 0, 0), 1); // Simulation de Chargement
+  colorLED(strip.Color(0, 250, 0), 100); // Simulation de Chargement
   //colorWipe(strip.Color(0, 250, 0), 100); // Vert 
   //colorWipe(strip.Color(0, 0, 0), 100); // Eteint
   //colorWipe(strip.Color(250, 0, 0), 100); // Rouge
-
-    
+  
 
 }
 
 void loop() {
-  int i;
-  int j;
-  j=0; // Initialisation de la variable permettant de gérer 255 couleurs. 
-  do // Boucle do permettant de requeter les fonctions de navigations à chaque boucle de couleurs. Permettant un refresh fréquent.
-  {
-  
   navigation(); // Appel de la fonction navigation en boucle pour capter les boutons
   affichage(); // Appel de la fonction affichage en boucle pour rafraichir l'écran en fonction des boutons (posmenu)
-
-    for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-    }
-    strip.show(); // On lance la mise à jour des couleurs
-    delay(50); // On attend 50 millisec avant de rechanger
-
-  j++; // On incrémente le compteur, et on passe à une autre couleur.
-  } while (j<256);
 }
 
 //FONCTION NAVIGATION 
@@ -179,12 +156,9 @@ void distribution() {
   delay (1000);
   monEcran.setCursor(0, 0); // On initialise le curseur en haut
   monEcran.print("DISTRIBUTION ..."); // On affiche le titre
-  //colorWipe(strip.Color(253, 108, 158), 0); // On met en rose le ring
+  colorWipe(strip.Color(253, 108, 158), 0); // On met en rose le ring
   temps = millis(); // On sauvegarde l'heure actuel
-  int i; // Variable pour le rainbow maison
-  int j; // Variable pour le rainbow maison
-  j=0; // Initialisation de la variable pour les 255 couleurs
-      
+
   switch (posMenu) { // En fonction de la position dans le menu lors de la selection, on charge les pompes
      case 0: // Ti Punch
       //On allume toutes les pomptes du cocktails
@@ -198,16 +172,6 @@ void distribution() {
        pompeV2(canadou,1); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(citron,2);
        pompeV2(rhum,3);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
       } while ((millis() - temps) < conv(3)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide (ici rhum)
       break;
      case 1: // Gin Tonic'
@@ -216,21 +180,12 @@ void distribution() {
       digitalWrite(gin, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(15)*100);
+       avancement = ((millis() - temps)/conv(10)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2(schwepps,10); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(gin,3);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(15)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(10)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 2: // Planteur
       //On allume toutes les pomptes du cocktails
@@ -250,16 +205,7 @@ void distribution() {
        pompeV2(citron,2);
        pompeV2(rhum,6);
        pompeV2(canadou,1);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
+       //Serial.println((millis() - temps));
       } while ((millis() - temps) < conv(6)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 3: // Loeiza SA
@@ -276,16 +222,7 @@ void distribution() {
        pompeV2(grenadine,3);
        pompeV2(ananas,6);
        pompeV2(citron,2);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
+       //Serial.println((millis() - temps));
       } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 4: // Gimlet
@@ -300,16 +237,7 @@ void distribution() {
        pompeV2(citron,2); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(gin,4);
        pompeV2(canadou,2);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
+       //Serial.println((millis() - temps));
       } while ((millis() - temps) < conv(4)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 5: // Le Bali
@@ -322,25 +250,16 @@ void distribution() {
       digitalWrite(canadou, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(8)*100);
+       avancement = ((millis() - temps)/conv(5)*100);
        draw_progressbar(avancement);
-       pompeV2(orange,4); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
-       pompeV2(schwepps,8);
-       pompeV2(ananas,4);
-       pompeV2(citron,4);
-       pompeV2(rhum,4);
-       pompeV2(canadou,1);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       pompeV2(orange,5); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2(schwepps,5);
+       pompeV2(ananas,5);
+       pompeV2(citron,5);
+       pompeV2(rhum,5);
+       pompeV2(canadou,2);
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(5)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 6: // Christopher
        //On allume toutes les pomptes du cocktails
@@ -354,16 +273,7 @@ void distribution() {
        pompeV2(orange,7); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(rhum,6);
        pompeV2(gin,3);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
+       //Serial.println((millis() - temps));
       } while ((millis() - temps) < conv(7)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 7: // Le Léo
@@ -380,16 +290,7 @@ void distribution() {
        pompeV2(ananas,4);
        pompeV2(citron,2);
        pompeV2(gin,5);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
+       //Serial.println((millis() - temps));
       } while ((millis() - temps) < conv(5)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 8: // Flora Dora
@@ -400,23 +301,14 @@ void distribution() {
       digitalWrite(gin, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(15)*100);
+       avancement = ((millis() - temps)/conv(10)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2(schwepps,10); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(grenadine,1);
        pompeV2(citron,3);
        pompeV2(gin,4);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(15)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(10)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 9: // Gin Fizz
       //On allume toutes les pomptes du cocktails
@@ -426,23 +318,14 @@ void distribution() {
       digitalWrite(canadou, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(15)*100);
+       avancement = ((millis() - temps)/conv(12)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2(schwepps,12); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(citron,4);
        pompeV2(gin,6);
        pompeV2(canadou,1);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(15)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(12)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 10: // Bacardi Cocktail
       //On allume toutes les pomptes du cocktails
@@ -452,23 +335,14 @@ void distribution() {
       digitalWrite(rhum, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(6)*100);
+       avancement = ((millis() - temps)/conv(4)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,6); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2(schwepps,4); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(grenadine,3);
        pompeV2(citron,3);
        pompeV2(rhum,4);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(6)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(4)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 11: // Cendrillon
       //On allume toutes les pomptes du cocktails
@@ -479,24 +353,15 @@ void distribution() {
       digitalWrite(canadou, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(8)*100);
+       avancement = ((millis() - temps)/conv(6)*100);
        draw_progressbar(avancement);
        pompeV2(orange,3); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
-       pompeV2(schwepps,8);
+       pompeV2(schwepps,6);
        pompeV2(ananas,3);
        pompeV2(citron,2);
        pompeV2(canadou,2);
-      // Début du rainbow maison
-      for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
-      strip.setPixelColor(i, Wheel((i+j) & 255)); // On attribue une couleur
-      }
-      strip.show(); // On lance la mise à jour des couleurs
-      j++;
-      if (j==255){
-        j=0;
-      }
-      // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+       //Serial.println((millis() - temps));
+      } while ((millis() - temps) < conv(6)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      default: // Sinon
       monEcran.setCursor(0, 1); // On postionne le curseur sur la deuxième ligne
@@ -504,15 +369,14 @@ void distribution() {
       delay(1000);
       break;
   }
+  draw_progressbar(100);
+  tonePlay();
+  monEcran.setCursor(0, 0); // On postionne le curseur sur la première ligne
+  monEcran.print("A LA VOTRE !"); // On affiche un message de dégustation
   for(int i = 1; i <= 8; i++) {
     // Pour chaque Pin du relais, on les désactive tout de suite. Sécurité
     digitalWrite(i,HIGH);
   }
-  draw_progressbar(100);
-  Zelda();
-  monEcran.setCursor(0, 0); // On postionne le curseur sur la première ligne
-  monEcran.print("A LA VOTRE !"); // On affiche un message de dégustation
-
   colorWipe(strip.Color(0, 250, 0), 0); // On clignote
   delay(250);
   colorWipe(strip.Color(0, 0, 0), 0); // On clignote
@@ -521,21 +385,6 @@ void distribution() {
   delay(250);
   colorWipe(strip.Color(0, 0, 0), 0); // On clignote
   delay(250);
-  colorWipe(strip.Color(0, 250, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 0, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 250, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 0, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 250, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 0, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 250, 0), 0); // On clignote
-  delay(250);
-  colorWipe(strip.Color(0, 0, 0), 0); // On clignote
 }
 
 //FONCTION ACTIVATION DE POMPES A SUPPRIMER
@@ -587,7 +436,6 @@ void initialisation() {
     // Pour chaque Pin du relais, on éteint
     digitalWrite(i, HIGH);
   }
-  Simpson();
 }
 
 //FONCTION PURGE DES POMPES
@@ -612,12 +460,11 @@ void purge() {
     // Pour chaque Pin du relais, on éteint
     digitalWrite(i, HIGH);
   }
-  Simpson();
 }
 
 //FONCTION MUSIQUE ZELDA
 //NOTE_G5, NOTE_FS5, NOTE_DS5, NOTE_G4, NOTE_FS4, NOTE_E5, NOTE_GS5, NOTE_C6
-void Zelda() {
+void tonePlay() {
     tone(SPEAKER, NOTE_G5, 125);
     delay(162);
     tone(SPEAKER, NOTE_FS5, 125);
@@ -636,46 +483,6 @@ void Zelda() {
     delay(650);
   }
 
-//FONCTION MUSIQUE SIMPSON
-
-void Simpson() {
-  int bpm = 100;
-  int bps = bpm / 60;
-  int fullNoteMs = 1000 / bps;
-  int halfNoteMs = fullNoteMs / 2;
-  int quarterNoteMs = halfNoteMs / 2;
-  int eighthNoteMs = quarterNoteMs / 2;
-  int note = 0;
-  int duration = 0;
-  int simpsons[] = {HALF, NOTE_C4, QUARTER, NOTE_E4, NOTE_FS4, EIGHTH, NOTE_A4, HALF, NOTE_G4, QUARTER, NOTE_E4, NOTE_C4, NOTE_G3, EIGHTH, NOTE_FS3, NOTE_FS3, NOTE_FS3, QUARTER, NOTE_G3};
-  int numNotes = sizeof(simpsons)/sizeof(int);
-
-    do {
-     if (simpsons[note] == HALF) {
-     duration = halfNoteMs;
-    } else {
-        if (simpsons[note] == QUARTER) {
-        duration = quarterNoteMs;
-        } else {
-          if (simpsons[note] == EIGHTH) {
-          duration = eighthNoteMs;
-          } else {
-            if (simpsons[note] == SILENCE) {
-              noTone(SPEAKER);
-              delay(duration);
-            } else {
-              tone(SPEAKER, simpsons[note]);
-              delay(duration);
-              noTone(SPEAKER); 
-              }
-            }
-          }   
-        }
-    note++;
-  } while (note <= numNotes);
-
-}
-
 //FONCTION NEOPIXEL
 void colorWipe(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
@@ -685,14 +492,12 @@ void colorWipe(uint32_t c, uint8_t wait) {
   }
 }
 void colorLED(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<=(strip.numPixels()-1); i++) {
-    strip.setPixelColor(i, c);
+  for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i-1, 0);
+    strip.setPixelColor(i, c);
     strip.show();
     delay(wait);
   }
-    strip.setPixelColor(strip.numPixels()-1, 0);
-    strip.show();
 }
 
 void rainbow(uint8_t wait) {
@@ -719,7 +524,7 @@ uint32_t Wheel(byte WheelPos) {
   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
-// Chargement de caractères pour afficher la barre de progression
+//Chargement de caractères pour afficher la barre de progression
 /* Caractères personnalisés */
 byte DIV_0_OF_5[8] = {
   B00000, 
