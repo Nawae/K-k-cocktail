@@ -554,7 +554,7 @@ long conv(long a) { // a = nombre de CL
 
 //FONCTION CONVERSATION CL EN MILLISECONDES POUR LA POMPE A AIR
 long convair(long a) { // a = nombre de CL
-  return a*1000;
+  return a*170;
 }
 
 //FONCTION POMPES CL fonction permettant de rentrer l'alcool, la dose, et de faire les vérifications nécessaires
@@ -587,10 +587,18 @@ void initialisation() {
   monEcran.setCursor(0, 1); // On postionne le curseur sur la deuxième ligne
   monEcran.print("EN COURS "); // On affiche 
      
-  for(int i = 1; i <= 8; i++) {
-     // Pour chaque Pin du relais, on active
-    digitalWrite(i, LOW);
-  }
+  //for(int i = 1; i <= 8; i++) {
+  //   // Pour chaque Pin du relais, on active
+  //  digitalWrite(i, LOW);
+  //}
+  digitalWrite(1,LOW);
+  digitalWrite(3,LOW);
+  digitalWrite(4,LOW);
+  digitalWrite(5,LOW);
+  digitalWrite(6,LOW);
+  digitalWrite(7,LOW);
+  digitalWrite(8,LOW);
+  
   temps = millis(); // On sauvegarde l'heure actuel
   do {
       // Chargement des tuyaux, on patiente
@@ -602,6 +610,17 @@ void initialisation() {
     // Pour chaque Pin du relais, on éteint
     digitalWrite(i, HIGH);
   }
+  
+  digitalWrite(2,LOW); //Chargement du tuyau bulle
+  temps = millis(); // On sauvegarde l'heure actuel
+  do {
+      // Chargement des tuyaux, on patiente
+      // On allume les lumières de chargement en attendant
+      colorLED(strip.Color(0, 250, 0), 50); // Simulation de Chargement
+     } while ((millis() - temps) < 3000); // Tant qu'on n'a pas rempli les tuyaux en 3 sec, on laisse allumé.
+   digitalWrite(2, HIGH);
+
+  
   Simpson();
 }
 
@@ -612,21 +631,37 @@ void purge() {
   monEcran.print("PURGE"); // On affiche le titre
   monEcran.setCursor(0, 1); // On postionne le curseur sur la deuxième ligne
   monEcran.print("EN COURS "); // On affiche
-  for(int i = 1; i <= 8; i++) {
-    // Pour chaque Pin du relais, on active
-    digitalWrite(i, LOW);
-  }
+  
+  digitalWrite(1,LOW);
+  digitalWrite(3,LOW);
+  digitalWrite(4,LOW);
+  digitalWrite(5,LOW);
+  digitalWrite(6,LOW);
+  digitalWrite(7,LOW);
+  digitalWrite(8,LOW);
+  
   temps = millis(); // On sauvegarde l'heure actuel
   do {
-      // DeChargement des tuyaux, on patiente
-      // On allume les lumières de DeChargement en attendant
-      colorLED(strip.Color(250, 0, 0), 50); // Simulation de Purge
-     } while ((millis() - temps) < 10000); // Tant qu'on n'a pas rempli les tuyaux d'eau en 10 sec, on laisse allumé.
+      // Chargement des tuyaux, on patiente
+      // On allume les lumières de chargement en attendant
+      colorLED(strip.Color(250, 0, 0), 50); // Simulation de Chargement
+     } while ((millis() - temps) < 10000); // Tant qu'on n'a pas rempli les tuyaux en 7,5 sec, on laisse allumé.
 
     for(int i = 1; i <= 8; i++) {
     // Pour chaque Pin du relais, on éteint
     digitalWrite(i, HIGH);
   }
+  
+  digitalWrite(2,LOW); //Chargement du tuyau bulle
+  temps = millis(); // On sauvegarde l'heure actuel
+  do {
+      // Chargement des tuyaux, on patiente
+      // On allume les lumières de chargement en attendant
+      colorLED(strip.Color(250, 0, 0), 50); // Simulation de Chargement
+     } while ((millis() - temps) < 5000); // Tant qu'on n'a pas rempli les tuyaux en 3 sec, on laisse allumé.
+   digitalWrite(2, HIGH);
+
+  
   Simpson();
 }
 
