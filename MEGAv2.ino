@@ -1,6 +1,8 @@
-//NAWAE 2018/05/13
+//NAWAE 2020/07/27
 //Dispositif de création de Cocktails
 //Premier programme Arduino / Premier Projet
+//Modification pour Rozenn
+//Noms des cocktails et nouvelle gestion du pétillant
 
 //CHARGEMENT DES LIBRAIRIES
 #include <LiquidCrystal.h> // Chargement de la librairie pour l'écran LCD
@@ -218,7 +220,7 @@ void distribution() {
       {
        avancement = ((millis() - temps)/conv(15)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(gin,3);
       // Début du rainbow maison
       for(i=0; i<strip.numPixels(); i++) { // Pour chaque led du Ring, 
@@ -325,7 +327,7 @@ void distribution() {
        avancement = ((millis() - temps)/conv(8)*100);
        draw_progressbar(avancement);
        pompeV2(orange,4); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
-       pompeV2(schwepps,8);
+       pompeV2air(schwepps,4);
        pompeV2(ananas,4);
        pompeV2(citron,4);
        pompeV2(rhum,4);
@@ -408,7 +410,7 @@ void distribution() {
       {
        avancement = ((millis() - temps)/conv(15)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(grenadine,1);
        pompeV2(citron,3);
        pompeV2(gin,4);
@@ -434,7 +436,7 @@ void distribution() {
       {
        avancement = ((millis() - temps)/conv(15)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,15); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(citron,3);
        pompeV2(gin,6);
        pompeV2(canadou,2);
@@ -460,7 +462,7 @@ void distribution() {
       {
        avancement = ((millis() - temps)/conv(6)*100);
        draw_progressbar(avancement);
-       pompeV2(schwepps,6); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
+       pompeV2air(schwepps,3); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(grenadine,3);
        pompeV2(citron,3);
        pompeV2(rhum,4);
@@ -488,7 +490,7 @@ void distribution() {
        avancement = ((millis() - temps)/conv(8)*100);
        draw_progressbar(avancement);
        pompeV2(orange,3); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
-       pompeV2(schwepps,8);
+       pompeV2air(schwepps,4);
        pompeV2(ananas,3);
        pompeV2(citron,2);
        pompeV2(canadou,2);
@@ -544,26 +546,33 @@ void distribution() {
   colorWipe(strip.Color(0, 0, 0), 0); // On clignote
 }
 
-//FONCTION ACTIVATION DE POMPES A SUPPRIMER
-void pompe(int a, int b) { // a = numéro du PIN activant le relais; b = centilitre convertit en temps
-  digitalWrite(a, LOW);
-  delay(b*3000);
-  delay(b*3000);
-  digitalWrite(a, HIGH);
-  delay(100);
-}
-
 //FONCTION CONVERSATION CL EN MILLISECONDES
-//Permet de changer de moteur sans changer tout le code.
+//Permet de changer de puissance, de moteur sans changer tout le code. Juste à changer le temps nécessaire pour faire 1 cl.
 long conv(long a) { // a = nombre de CL
   return a*6000;
 }
 
-//FONCTION POMPES CL  fonction permettant de rentrer l'alcool, la dose, et de faire les vérifications nécessaires
+//FONCTION CONVERSATION CL EN MILLISECONDES POUR LA POMPE A AIR
+long convair(long a) { // a = nombre de CL
+  return a*1000;
+}
+
+//FONCTION POMPES CL fonction permettant de rentrer l'alcool, la dose, et de faire les vérifications nécessaires
 void pompeV2(int a, int b) { // a = numéro du PIN activant le relais; b = centilitre convertit en temps;
   if(digitalRead(a)==0) // Si la pompe est encore activée, alors on compare, sinon, on l'a déjà éteinte.
   {
     if((millis() - temps) > conv(b)) // Si la différence entre le temps sauvegardé et le temps actuel, soit le temps passé dans la boucle, est plus grand que le nombre de cl * 6 sec, alors on peux éteindre la pompe, la dose a déjà été versée
+    {
+      digitalWrite(a, HIGH); // On ferme le courant.
+    }
+  }
+}
+
+//FONCTION POMPES AIR CL fonction permettant de rentrer l'alcool, la dose, et de faire les vérifications nécessaires
+void pompeV2air(int a, int b) { // a = numéro du PIN activant le relais; b = centilitre convertit en temps;
+  if(digitalRead(a)==0) // Si la pompe est encore activée, alors on compare, sinon, on l'a déjà éteinte.
+  {
+    if((millis() - temps) > convair(b)) // Si la différence entre le temps sauvegardé et le temps actuel, soit le temps passé dans la boucle, est plus grand que le nombre de cl * 6 sec, alors on peux éteindre la pompe, la dose a déjà été versée
     {
       digitalWrite(a, HIGH); // On ferme le courant.
     }
