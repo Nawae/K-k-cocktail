@@ -218,7 +218,7 @@ void distribution() {
       digitalWrite(gin, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(8)*100);
+       avancement = ((millis() - temps)/conv(3)*100); // La valeur du conv dépend du liquide le plus présent, sauf lorsque c'est du schwepps avec pompe à air, donc conv3
        draw_progressbar(avancement);
        pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(gin,3);
@@ -232,7 +232,7 @@ void distribution() {
         j=0;
       }
       // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+      } while ((millis() - temps) < conv(3)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 2: // Planteur
       //On allume toutes les pomptes du cocktails
@@ -408,7 +408,7 @@ void distribution() {
       digitalWrite(gin, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(8)*100);
+       avancement = ((millis() - temps)/conv(4)*100);
        draw_progressbar(avancement);
        pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(grenadine,1);
@@ -424,7 +424,7 @@ void distribution() {
         j=0;
       }
       // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+      } while ((millis() - temps) < conv(4)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 9: // Gin Fizz
       //On allume toutes les pomptes du cocktails
@@ -434,7 +434,7 @@ void distribution() {
       digitalWrite(canadou, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(8)*100);
+       avancement = ((millis() - temps)/conv(6)*100);
        draw_progressbar(avancement);
        pompeV2air(schwepps,8); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2(citron,3);
@@ -450,7 +450,7 @@ void distribution() {
         j=0;
       }
       // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(8)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+      } while ((millis() - temps) < conv(6)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      case 10: // Bacardi Cocktail
       //On allume toutes les pomptes du cocktails
@@ -487,7 +487,7 @@ void distribution() {
       digitalWrite(canadou, LOW);
       do // On lance une boucle qui ne s'arrêtera qu'à la fin du liquide le plus présent.
       {
-       avancement = ((millis() - temps)/conv(4)*100);
+       avancement = ((millis() - temps)/conv(3)*100);
        draw_progressbar(avancement);
        pompeV2(orange,3); //  Si la Pompe est activée, alors on regarde si elle a pu délivrer x Cl ( x CL = X * 6000 millisecondes). Si c'est le cas, alors on coupe la pompe, sinon on laisse allumer.
        pompeV2air(schwepps,4);
@@ -504,7 +504,7 @@ void distribution() {
         j=0;
       }
       // Fin du rainbow maison   
-      } while ((millis() - temps) < conv(4)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
+      } while ((millis() - temps) < conv(3)); // Tant qu'on ne dépasse pas le temps nécessaire au plus grand liquide
       break;
      default: // Sinon
       monEcran.setCursor(0, 1); // On postionne le curseur sur la deuxième ligne
